@@ -1,30 +1,48 @@
 package ru.rabiarill.models;
 
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Optional;
 
+@Entity
+@Table(name = "Book")
 public class Book {
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @Column(name = "id")
    private int id;
-   private int personId;
+
+   @ManyToOne
+   @JoinColumn(name = "person_id", referencedColumnName = "id")
+   private Person owner;
+
    @NotEmpty (message = "Name should not be empty")
    @Size(max = 150, message = "Size should be less than 150")
+   @Column(name = "name")
    private String name;
+
    @Size(max = 150, message = "Size should be less than 150")
+   @Column(name = "author")
    private String author;
+
    @Min(value = 1000, message = "Year of publishing should be more than 1000")
+   @Column(name = "year_of_publishing")
    private int yearOfPublishing;
 
    public Book(){}
 
-   public Book(int id, int personId, String name, String author, int yearOfPublishing) {
+   public Book(int id, String name, String author, int yearOfPublishing) {
       this.id = id;
-      this.personId = personId;
       this.name = name;
       this.author = author;
       this.yearOfPublishing = yearOfPublishing;
+   }
+
+   public void update(Book book){
+      this.name = book.getName();
+      this.author = book.getAuthor();
+      this.yearOfPublishing = book.getYearOfPublishing();
    }
 
    public int getId() {
@@ -33,14 +51,6 @@ public class Book {
 
    public void setId(int id) {
       this.id = id;
-   }
-
-   public int getPersonId() {
-      return personId;
-   }
-
-   public void setPersonId(int personId) {
-      this.personId = personId;
    }
 
    public String getName() {
@@ -67,4 +77,15 @@ public class Book {
       this.yearOfPublishing = yearOfPublishing;
    }
 
+   public Person getOwner(){
+      return this.owner;
+   }
+
+   public void setOwner(Person person){
+      this.owner = person;
+   }
+
+   public int getPersonId() {
+      return owner.getId();
+   }
 }

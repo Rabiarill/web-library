@@ -1,9 +1,9 @@
 package ru.rabiarill.dao;
 
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.rabiarill.models.Person;
 
 import java.util.List;
@@ -11,37 +11,46 @@ import java.util.Optional;
 
 @Component
 public class PersonDAO {
-   private final JdbcTemplate jdbcTemplate;
+
+   private final SessionFactory sessionFactory;
 
    @Autowired
-   public PersonDAO(JdbcTemplate jdbcTemplate) {
-      this.jdbcTemplate = jdbcTemplate;
+   public PersonDAO(SessionFactory sessionFactory) {
+      this.sessionFactory = sessionFactory;
    }
 
+   @Transactional(readOnly = true)
    public List<Person> personList() {
-      return jdbcTemplate.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(Person.class));
+      return sessionFactory.getCurrentSession()
+              .createQuery("from Person", Person.class).getResultList();
    }
 
+   @Transactional(readOnly = true)
    public Person getPerson(int id) {
-      return jdbcTemplate.query("SELECT * FROM Person WHERE id = ?", new Object[]{id}, new BeanPropertyRowMapper<>(Person.class))
-              .stream().findAny().orElse(null);
+      return sessionFactory.getCurrentSession().get(Person.class, id);
    }
 
+   @Transactional(readOnly = true)
    public Optional<Person> getPersonByName(String fullName){
-      return jdbcTemplate.query("SELECT * FROM person WHERE full_name=?", new Object[]{fullName},
-              new BeanPropertyRowMapper<>(Person.class)).stream().findAny();
+      return sessionFactory.getCurrentSession()
+              .createQuery("from Person where fullName=:fullName", Person.class)
+              .setParameter("fullName", fullName)
+              .stream().findAny();
    }
 
+   @Transactional
    public void save(Person person) {
-      jdbcTemplate.update("INSERT INTO Person(full_name, year_of_birth) VALUES (?, ?)",
-              person.getFullName(), person.getYearOfBirth());
+      sessionFactory.getCurrentSession().save(person);
    }
 
+   @Transactional
    public void update(int id, Person updatedPerson){
-      jdbcTemplate.update("UPDATE Person SET full_name=?, year_of_birth=? where id = ?",
-              updatedPerson.getFullName(), updatedPerson.getYearOfBirth(), id);
+      sessionFactory.getCurrentSession().get(Person.class, id).update(updatedPerson);
    }
+
+   @Transactional
    public void delete(int id){
-      jdbcTemplate.update("DELETE FROM person WHERE id = ?", id);
+      sessionFactory.getCurrentSession().createQuery("delete Person where id=:id")
+              .setParameter("id", id).executeUpdate();
    }
 }

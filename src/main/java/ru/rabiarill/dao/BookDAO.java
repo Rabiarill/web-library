@@ -1,66 +1,78 @@
 package ru.rabiarill.dao;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.rabiarill.models.Book;
 import ru.rabiarill.models.Person;
-import ru.rabiarill.util.mappers.BookRowMapper;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component
 public class BookDAO {
-   private final JdbcTemplate jdbcTemplate;
+
+   private final SessionFactory sessionFactory;
 
    @Autowired
-   public BookDAO(JdbcTemplate jdbcTemplate) {
-      this.jdbcTemplate = jdbcTemplate;
+   public BookDAO(SessionFactory sessionFactory) {
+      this.sessionFactory = sessionFactory;
    }
 
+   @Transactional(readOnly = true)
    public List<Book> bookList(){
-      return jdbcTemplate.query("SELECT * FROM Book", new BookRowMapper() );
+      return  sessionFactory.getCurrentSession()
+              .createQuery("from Book", Book.class).getResultList();
    }
 
+   @Transactional(readOnly = true)
    public List<Book> bookList(int personId){
-      return jdbcTemplate.query("SELECT * FROM book where person_id=?", new Object[]{personId},
-              new BookRowMapper());
+      Session session = sessionFactory.getCurrentSession();
+      return  session.createQuery("from Book where owner=:owner", Book.class)
+              .setParameter("owner", session.get(Person.class, personId)).getResultList();
    }
 
+   @Transactional(readOnly = true)
    public Book getBook(int id){
-      return jdbcTemplate.query("SELECT * FROM book WHERE id=?", new Object[]{id}, new BookRowMapper())
-              .stream().findAny().orElse(null);
+      return sessionFactory.getCurrentSession().get(Book.class, id);
    }
 
+   @Transactional
    public void save(Book book) {
-      jdbcTemplate.update("INSERT INTO book(name, author, year_of_publishing) " +
-                      "VALUES (?, ?, ?)",
-              book.getName(), book.getAuthor(), book.getYearOfPublishing()
-              );
+      sessionFactory.getCurrentSession().save(book);
    }
 
-   public void assign(int bookId, int personId){
-      jdbcTemplate.update("UPDATE book SET person_id=? WHERE id=?", personId, bookId);
-   }
-
+   @Transactional
    public void update(int id, Book book ){
-      jdbcTemplate.update("UPDATE book SET  name=?, author=?, year_of_publishing=? WHERE id=?",
-              book.getName(), book.getAuthor(), book.getYearOfPublishing(), id);
+      sessionFactory.getCurrentSession().get(Book.class, id).update(book);
    }
 
+   @Transactional
+   public void assign(int bookId, int personId){
+      Session session = sessionFactory.getCurrentSession();
+      session.createQuery("update Book set owner=:owner where id=:bookId")
+              .setParameter("owner", session.get(Person.class, personId))
+              .setParameter("bookId", bookId).executeUpdate();
+   }
+
+
+   @Transactional
    public void delete(int id){
-      jdbcTemplate.update("DELETE FROM book WHERE id=?", id);
+      sessionFactory.getCurrentSession().createQuery("delete Book where id=:id")
+              .setParameter("id", id).executeUpdate();
    }
 
+   @Transactional
    public void release(int id){
-      jdbcTemplate.update("UPDATE book SET person_id=null where id=?", id);
+      sessionFactory.getCurrentSession().createQuery("update Book set owner=null where id=:id")
+              .setParameter("id", id).executeUpdate();
    }
 
+   @Transactional(readOnly = true)
    public Optional<Person> getOwner(int personId) {
-      return jdbcTemplate.query("SELECT p.* from  person p JOIN book b ON p.id = b.person_id WHERE person_id=?",
-              new Object[]{personId}, new BeanPropertyRowMapper<>(Person.class))
-              .stream().findAny();
+      return sessionFactory.getCurrentSession().createQuery("from Person where id=:personId", Person.class)
+              .setParameter("personId", personId).stream().findAny();
    }
 }
