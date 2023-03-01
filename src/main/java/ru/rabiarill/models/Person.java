@@ -32,11 +32,6 @@ public class Person {
       this.yearOfBirth = yearOfBirth;
    }
 
-   public void update(Person person){
-      this.fullName = person.getFullName();
-      this.yearOfBirth = person.getYearOfBirth();
-   }
-
    public int getId() {
       return id;
    }

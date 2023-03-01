@@ -13,6 +13,9 @@ public class Book {
    @Column(name = "id")
    private int id;
 
+   @Column(name = "person_id", insertable = false, updatable = false)
+   private Integer personId;
+
    @ManyToOne
    @JoinColumn(name = "person_id", referencedColumnName = "id")
    private Person owner;
@@ -37,12 +40,6 @@ public class Book {
       this.name = name;
       this.author = author;
       this.yearOfPublishing = yearOfPublishing;
-   }
-
-   public void update(Book book){
-      this.name = book.getName();
-      this.author = book.getAuthor();
-      this.yearOfPublishing = book.getYearOfPublishing();
    }
 
    public int getId() {
@@ -85,7 +82,11 @@ public class Book {
       this.owner = person;
    }
 
-   public int getPersonId() {
-      return owner.getId();
+   public Integer getPersonId() {
+      return personId;
+   }
+
+   public void setPersonId(Integer personId) {
+      this.personId = personId;
    }
 }
