@@ -1,6 +1,8 @@
 package ru.rabiarill.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rabiarill.models.Book;
@@ -20,8 +22,19 @@ public class BookService {
       this.bookRepository = bookRepository;
    }
 
-   public List<Book> findAll(){
+   public List<Book> findAll(boolean sortByYearOfPublishing){
+      if (sortByYearOfPublishing){
+         return bookRepository.findAll(Sort.by("yearOfPublishing"));
+      }
       return bookRepository.findAll();
+   }
+
+   public List<Book> findAll(Integer page, Integer itemsPerPage, boolean sortByYearOfPublishing){
+      if (sortByYearOfPublishing){
+         return bookRepository.findAll(PageRequest.of(page, itemsPerPage, Sort.by("yearOfPublishing"))).getContent();
+      }
+      return bookRepository.findAll(PageRequest.of(page, itemsPerPage)).getContent();
+
    }
 
    public List<Book> findByOwner(Person owner){
@@ -56,6 +69,10 @@ public class BookService {
    @Transactional
    public void assign(int bookId, int personId){
       bookRepository.setBookOwner(bookId, personId);
+   }
+
+   public List<Book> findAllByNameStartingWith(String name){
+      return bookRepository.findAllByNameStartingWith(name);
    }
 
 }

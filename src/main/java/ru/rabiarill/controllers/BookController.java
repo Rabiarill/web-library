@@ -27,8 +27,14 @@ public class BookController {
    }
 
    @GetMapping()
-   public String index(Model model){
-      model.addAttribute("book", bookService.findAll());
+   public String index(Model model, @RequestParam(value = "page", required = false) Integer page,
+                       @RequestParam(value = "itemsPerPage", required = false) Integer itemsPerPage,
+                       @RequestParam(value = "sortByYear", required = false) boolean sortByYear){
+      if (page!=null && itemsPerPage!=null){
+         model.addAttribute("book", bookService.findAll(page, itemsPerPage, sortByYear));
+      }else {
+         model.addAttribute("book", bookService.findAll(sortByYear));
+      }
       return "/book/index";
    }
 
@@ -91,6 +97,17 @@ public class BookController {
    public String delete(@PathVariable int id){
       bookService.delete(id);
       return "redirect:/book";
+   }
+
+   @GetMapping("/search")
+   public String searchPage(){
+      return "/book/search";
+   }
+
+   @PostMapping("/search")
+   public String resultOfSearch(Model model, @RequestParam("bookName") String bookName){
+      model.addAttribute("books", bookService.findAllByNameStartingWith(bookName));
+      return "/book/search";
    }
 
 }
