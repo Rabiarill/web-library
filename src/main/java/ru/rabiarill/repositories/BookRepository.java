@@ -13,13 +13,10 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<Book, Integer> {
    List<Book> findByOwner(Person owner);
 
-   @Modifying
-   @Query("update Book set owner=null where id=?1")
-   void setOwner(int id);
-
-   @Modifying
-   @Query("update Book b set b.personId=?2 where b.id=?1")
-   void setBookOwner(int bookId, int personId);
-
    List<Book> findAllByNameStartingWith(String name);
+
+   @Modifying
+   @Query(value = "update book set return_date=now()+interval '10 days' where id=?1",
+   nativeQuery = true)
+   void setReturnDate(int bookId);
 }

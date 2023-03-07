@@ -6,11 +6,14 @@
     <title>Страница поиска</title>
 </head>
 <body>
+
 <form th:method="POST" th:action="@{/book/search}">
     <label for="searchField">Введите название книги:</label>
     <input type="text" id="searchField" name="bookName">
     <br>
     <input type="submit" value="Искать">
+</form>
+
     <div th:if="${books}">
         <div th:each="book : ${books}">
             <hr>
@@ -24,6 +27,11 @@
             </div>
         </div>
     </div>
-</form>
+
+    <div th:if="${books.isEmpty()}">
+        <hr>
+        <p>Книг не найдено</p>
+    </div>
+
 </body>
 </html>

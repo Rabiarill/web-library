@@ -1,9 +1,12 @@
 package ru.rabiarill.models;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 @Entity
 @Table(name = "Book")
@@ -32,6 +35,11 @@ public class Book {
    @Min(value = 1000, message = "Year of publishing should be more than 1000")
    @Column(name = "year_of_publishing")
    private int yearOfPublishing;
+
+   @Column(name = "return_date")
+   @Temporal(TemporalType.TIMESTAMP)
+   @DateTimeFormat(pattern = "dd/MM/YYYY hh/mm")
+   private Date returnDate;
 
    public Book(){}
 
@@ -88,5 +96,17 @@ public class Book {
 
    public void setPersonId(Integer personId) {
       this.personId = personId;
+   }
+
+   public Date getReturnDate() {
+      return returnDate;
+   }
+
+   public void setReturnDate(Date dateOfTake) {
+      this.returnDate = dateOfTake;
+   }
+
+   public boolean isReturnOverdue(){
+      return returnDate.before(new Date());
    }
 }

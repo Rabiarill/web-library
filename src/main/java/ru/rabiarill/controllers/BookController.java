@@ -52,8 +52,8 @@ public class BookController {
    }
 
    @PostMapping("/{id}/assign")
-   public String assign(@PathVariable("id") int id, @ModelAttribute("person") Person person){
-      bookService.assign(id,person.getId());
+   public String assign(@PathVariable("id") int id, @ModelAttribute("person") Person owner){
+      bookService.assign(id, owner);
       return "redirect:/book/"+id;
    }
 

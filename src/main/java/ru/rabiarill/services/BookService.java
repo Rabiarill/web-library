@@ -9,6 +9,7 @@ import ru.rabiarill.models.Book;
 import ru.rabiarill.models.Person;
 import ru.rabiarill.repositories.BookRepository;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -63,12 +64,16 @@ public class BookService {
 
    @Transactional
    public void release(int id){
-      bookRepository.setOwner(id);
+      Book book = bookRepository.getOne(id);
+      book.setOwner(null);
+      book.setReturnDate(null);
    }
 
    @Transactional
-   public void assign(int bookId, int personId){
-      bookRepository.setBookOwner(bookId, personId);
+   public void assign(int bookId, Person owner){
+      Book book = bookRepository.getOne(bookId);
+      book.setOwner(owner);
+      bookRepository.setReturnDate(bookId);
    }
 
    public List<Book> findAllByNameStartingWith(String name){
