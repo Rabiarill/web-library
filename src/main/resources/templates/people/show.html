@@ -6,8 +6,13 @@
     <title th:text="${person.getFullName()}"></title>
 </head>
 <body>
-    <p th:text="${person.getFullName()}"></p>
-    <p th:text="${person.getYearOfBirth()}"></p>
+
+    <a href="/">Главная</a>
+
+    <p th:text="'Имя пользователя: ' + ${person.getUsername()}"></p>
+    <p th:text="'Полное имя: ' + ${person.getFullName()}"></p>
+    <p th:text="'Год рождения: ' + ${person.getYearOfBirth()}"></p>
+    <p th:text="'Роль: ' + ${person.getRole()}"></p>
     <div th:if="${books.isEmpty()}">
         <p>Человек не взял ещё ни одной книги</p>
     </div>
@@ -21,10 +26,16 @@
         </div>
     </div>
     <hr/>
+    <form th:method="POST" th:action="@{/employee/{id}/appoint(id=${person.getId()})}">
+        <input type="submit" value="Назначить сотрудником">
+    </form>
+    <form th:method="POST" th:action="@{/employee/{id}/user(id=${person.getId()})}">
+        <input type="submit" value="Назначить пользователем">
+    </form>
     <form th:method="GET" th:action="@{/people/{id}/edit(id=${person.getId()})}">
         <input type="submit" value="Изменить">
     </form>
-    <form th:method="DELETE" th:action="@{/people/{id}(id=${person.getId()})}">
+    <form th:method="DELETE" th:action="@{/people/{id}/delete(id=${person.getId()})}">
         <input type="submit" value="Удалить">
     </form>
 </body>

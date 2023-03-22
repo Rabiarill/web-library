@@ -7,12 +7,14 @@
 </head>
 <body>
 
-<form th:method="POST" th:action="@{/book/search}">
-    <label for="searchField">Введите название книги:</label>
-    <input type="text" id="searchField" name="bookName">
-    <br>
-    <input type="submit" value="Искать">
-</form>
+    <a href="/">Главная</a>
+
+    <form th:method="POST" th:action="@{/book/search}">
+        <label for="searchField">Введите название книги:</label>
+        <input type="text" id="searchField" name="bookName">
+        <br>
+        <input type="submit" value="Искать">
+    </form>
 
     <div th:if="${books}">
         <div th:each="book : ${books}">
@@ -28,7 +30,7 @@
         </div>
     </div>
 
-    <div th:if="${books.isEmpty()}">
+    <div th:unless="${books}">
         <hr>
         <p>Книг не найдено</p>
     </div>

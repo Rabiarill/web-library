@@ -17,6 +17,6 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 
    @Modifying
    @Query(value = "update book set return_date=now()+interval '10 days' where id=?1",
-   nativeQuery = true)
+           nativeQuery = true)
    void setReturnDate(int bookId);
 }

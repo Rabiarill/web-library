@@ -6,6 +6,9 @@
     <title th:text="${book.getName()}"></title>
 </head>
 <body>
+
+    <a href="/">Главная</a>
+
     <p th:text="${book.getName()} + ', ' + ${book.getAuthor()} + ', ' + ${book.getYearOfPublishing()}"></p>
     <div th:if="${people}">
         <form th:method="POST" th:action="@{/book/{id}/assign(id=${book.getId()})}">

@@ -3,15 +3,18 @@
       lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Редактирование книги</title>
+    <title>Добавить книгу</title>
 </head>
 <body>
-<form th:method="PATCH" th:action="@{/book/{id}(id=${book.getId()})}" th:object="${book}">
+
+<a href="/">Главная</a>
+
+<form th:method="POST" th:action="@{/book/new}" th:object="${book}">
     <label for="name">Введите название книги:</label>
     <input type="text" th:field="*{name}" id="name">
     <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
     <br>
-    <label for="author">Введите автора:</label>
+    <label for="author">Введите имя автора:</label>
     <input type="text" th:field="*{author}" id="author">
     <div style="color:red" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></div>
     <br>
@@ -19,7 +22,7 @@
     <input type="text" th:field="*{yearOfPublishing}" id="yearOfPublishing">
     <div style="color:red" th:if="${#fields.hasErrors('yearOfPublishing')}" th:errors="*{yearOfPublishing}"></div>
     <br>
-    <input type="submit" value="Редактировать данные">
+    <input type="submit" value="Создать книгу">
 </form>
 </body>
 </html>

@@ -6,6 +6,9 @@
     <title>Все книги</title>
 </head>
 <body>
+
+    <a href="/">Главная</a>
+
     <div th:each="bookTemp : ${book}">
         <a th:href="@{/book/{id}(id=${bookTemp.getId()})}"
            th:text="${bookTemp.getName()} + ', ' + ${bookTemp.getAuthor()} + ', ' + ${bookTemp.getYearOfPublishing()}">book</a>
@@ -14,5 +17,10 @@
     <br>
     <hr/>
     <a href="/book/new">Создать новую книгу</a>
+    <br>
+    <form th:method="GET" th:action="@{/book/search}">
+        <input type="submit" value="Поиск книг">
+    </form>
+
 </body>
 </html>

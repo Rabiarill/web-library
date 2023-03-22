@@ -23,7 +23,7 @@ public class Book {
    @JoinColumn(name = "person_id", referencedColumnName = "id")
    private Person owner;
 
-   @NotEmpty (message = "Name should not be empty")
+   @NotEmpty(message = "Name should not be empty")
    @Size(max = 150, message = "Size should be less than 150")
    @Column(name = "name")
    private String name;
@@ -41,7 +41,8 @@ public class Book {
    @DateTimeFormat(pattern = "dd/MM/YYYY hh/mm")
    private Date returnDate;
 
-   public Book(){}
+   public Book() {
+   }
 
    public Book(int id, String name, String author, int yearOfPublishing) {
       this.id = id;
@@ -82,11 +83,11 @@ public class Book {
       this.yearOfPublishing = yearOfPublishing;
    }
 
-   public Person getOwner(){
+   public Person getOwner() {
       return this.owner;
    }
 
-   public void setOwner(Person person){
+   public void setOwner(Person person) {
       this.owner = person;
    }
 
@@ -106,7 +107,7 @@ public class Book {
       this.returnDate = dateOfTake;
    }
 
-   public boolean isReturnOverdue(){
+   public boolean isReturnOverdue() {
       return returnDate.before(new Date());
    }
 }

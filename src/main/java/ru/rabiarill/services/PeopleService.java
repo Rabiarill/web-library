@@ -20,31 +20,31 @@ public class PeopleService {
       this.peopleRepository = peopleRepository;
    }
 
-   public List<Person> findAll(){
+   public List<Person> findAll() {
       return peopleRepository.findAll();
    }
 
-   public Person findOne(int id){
+   public Person findOne(int id) {
       return peopleRepository.findById(id).orElse(null);
    }
 
-   public Optional<Person> findByName(String name){
-      return peopleRepository.findByFullName(name);
+   public Optional<Person> findByUsername(String username) {
+      return peopleRepository.findByUsername(username);
    }
 
    @Transactional
-   public void save(Person person){
+   public void save(Person person) {
       peopleRepository.save(person);
    }
 
    @Transactional
-   public void update(int id, Person updatedPerson){
+   public void update(int id, Person updatedPerson) {
       updatedPerson.setId(id);
       peopleRepository.save(updatedPerson);
    }
 
    @Transactional
-   public void delete(int id){
+   public void delete(int id) {
       peopleRepository.deleteById(id);
    }
 }
